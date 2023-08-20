@@ -182,13 +182,13 @@ class TestSignupView(TestCase):
 class TestLoginView(TestCase):
     def setUp(self):
         self.login_url = reverse("accounts:login")
+        User.objects.create_user(username="testuser", password="testpassword")
 
     def test_success_get(self):
         response = self.client.get(self.login_url)
         self.assertEqual(response.status_code, 200)
 
     def test_success_post(self):
-        User.objects.create_user(username="testuser", password="testpassword")
         valid_data = {
             "username": "testuser",
             "password": "testpassword",
@@ -204,7 +204,6 @@ class TestLoginView(TestCase):
         self.assertIn(SESSION_KEY, self.client.session)
 
     def test_failure_post_with_not_exists_user(self):
-        User.objects.create_user(username="testuser", password="testpassword")
         invalid_data = {
             "username": "Koshi",
             "password": "testpassword",
@@ -217,7 +216,6 @@ class TestLoginView(TestCase):
         self.assertNotIn(SESSION_KEY, self.client.session)
 
     def test_failure_post_with_empty_password(self):
-        User.objects.create_user(username="testuser", password="testpassword")
         invalid_data = {
             "username": "testuser",
             "password": "",
