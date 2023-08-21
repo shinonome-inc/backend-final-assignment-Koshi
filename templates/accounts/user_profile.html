@@ -3,5 +3,9 @@
 {% block title %}User Profile{% endblock %}
 
 {% block content %}
-<h1>{{ username }}</h1>
+{% for item in tweet_list %}
+<p>username: {{ item.username }} 投稿日時: {{ item.create_date }}</p>
+<p>投稿内容: {{ item.content }}</p>
+<hr>
+{% endfor %}
 {% endblock %}
