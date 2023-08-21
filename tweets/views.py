@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView
+from django.views.generic import CreateView, DetailView, ListView
 
 from .forms import TweetForm
 from .models import Tweet
@@ -30,3 +30,12 @@ class TweetCreateView(LoginRequiredMixin, CreateView):
         kwgs = super().get_form_kwargs()
         kwgs["username"] = self.request.user
         return kwgs
+
+
+class TweetDetailView(DetailView):
+    template_name = "tweets/tweet_detail.html"
+    model = Tweet
+
+    def get_queryset(self):
+        pk = self.kwargs["pk"]
+        return Tweet.objects.filter(id=pk)

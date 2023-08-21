@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block title %}Tweet Detail{% endblock %}
+
+{% block content %}
+<p>username: {{ tweet.username }} 投稿日時: {{ tweet.create_date }}</p>
+<p>投稿内容: {{ tweet.content }}</p>
+{% endblock %}
