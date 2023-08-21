@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView
@@ -7,6 +7,8 @@ from django.views.generic import CreateView, ListView
 from tweets.models import Tweet
 
 from .forms import SignupForm
+
+User = get_user_model()
 
 
 class SignupView(CreateView):
@@ -25,9 +27,9 @@ class SignupView(CreateView):
 
 class UserProfileView(LoginRequiredMixin, ListView):
     template_name = "accounts/user_profile.html"
-    model = Tweet
+    model = User
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["tweet_list"] = Tweet.objects.filter(username=self.request.user).order_by("-create_date")
+        context["tweet_list"] = Tweet.objects.filter(user=self.request.user).select_related("user")
         return context

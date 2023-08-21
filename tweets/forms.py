@@ -9,15 +9,15 @@ class TweetForm(forms.ModelForm):
         fields = ("content",)
 
     # Tweetモデルのusernameに今ログインしているusernameを適用させている
-    def __init__(self, username=None, *args, **kwargs):
-        self.username = username
+    def __init__(self, user=None, *args, **kwargs):
+        self.user = user
         super().__init__(*args, **kwargs)
 
     # ログインしているusernameをデータベースに保存する
     def save(self, commit=True):
         tweet_obj = super().save(commit=False)
-        if self.username:
-            tweet_obj.username = self.username
+        if self.user:
+            tweet_obj.user = self.user
         if commit:
             tweet_obj.save()
         return tweet_obj

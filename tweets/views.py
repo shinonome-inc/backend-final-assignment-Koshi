@@ -1,6 +1,6 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView, ListView
+from django.views.generic import CreateView, DeleteView, DetailView, ListView
 
 from .forms import TweetForm
 from .models import Tweet
@@ -9,12 +9,8 @@ from .models import Tweet
 class HomeView(LoginRequiredMixin, ListView):
     template_name = "tweets/home.html"
     model = Tweet
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # ツイートを投稿日時の降順に並び替える
-        context["tweet_list"] = Tweet.objects.order_by("-create_date")
-        return context
+    queryset = Tweet.objects.select_related("user")
+    context_object_name = "tweet_list"
 
 
 class TweetCreateView(LoginRequiredMixin, CreateView):
@@ -25,10 +21,10 @@ class TweetCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         return super().form_valid(form)
 
-    # Tweetモデルのusernameに今ログインしているusernameを格納し、フォームに渡している。
+    # Tweetモデルのuserに今ログインしているusernameを格納し、フォームに渡している。
     def get_form_kwargs(self):
         kwgs = super().get_form_kwargs()
-        kwgs["username"] = self.request.user
+        kwgs["user"] = self.request.user
         return kwgs
 
 
@@ -39,3 +35,19 @@ class TweetDetailView(DetailView):
     def get_queryset(self):
         pk = self.kwargs["pk"]
         return Tweet.objects.filter(id=pk)
+
+
+class TweetDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    template_name = "tweets/tweet_delete.html"
+    model = Tweet
+    queryset = Tweet.objects.select_related("user")
+    success_url = reverse_lazy("tweets:home")
+
+    def get(self, request, *args, **kwargs):
+        # test_funcの方が先に呼ばれるので、getメソッド内でself.objectにアクセス可能
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
+    def test_func(self):
+        self.object = self.get_object()
+        return self.object.user == self.request.user
