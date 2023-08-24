@@ -248,7 +248,7 @@ class TestLogoutView(TestCase):
 class TestUserProfileView(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="tester", password="testpassword")
-        self.client.login(username="tester", password="testpassword")
+        self.client.force_login(self.user)
         Tweet.objects.create(user=self.user, content="testcontent1")
         Tweet.objects.create(user=self.user, content="testpassword2")
         self.url = reverse("accounts:user_profile", kwargs=dict(username=self.user))

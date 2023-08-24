@@ -10,7 +10,7 @@ User = get_user_model()
 class TestHomeView(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="tester", password="testpassword")
-        self.client.login(username="tester", password="testpassword")
+        self.client.force_login(self.user)
         self.url = reverse("tweets:home")
         Tweet.objects.create(user=self.user, content="testcontent1")
         Tweet.objects.create(user=self.user, content="testcontent2")
@@ -26,7 +26,7 @@ class TestTweetCreateView(TestCase):
     def setUp(self):
         self.url = reverse("tweets:create")
         self.user = User.objects.create_user(username="tester", password="testpassword")
-        self.client.login(username="tester", password="testpassword")
+        self.client.force_login(self.user)
 
     def test_success_get(self):
         response = self.client.get(self.url)
@@ -75,7 +75,7 @@ class TestTweetCreateView(TestCase):
 class TestTweetDetailView(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="tester", password="testpassword")
-        self.client.login(username="tester", password="testpassword")
+        self.client.force_login(self.user)
         self.tweet = Tweet.objects.create(user=self.user, content="testcontent")
         self.url = reverse("tweets:detail", kwargs=dict(pk=self.tweet.pk))
 
@@ -91,7 +91,7 @@ class TestTweetDeleteView(TestCase):
         self.user = User.objects.create_user(username="tester", password="testpassword")
         self.tweet = Tweet.objects.create(user=self.user, content="testcontent")
         self.url = reverse("tweets:delete", kwargs=dict(pk=self.tweet.pk))
-        self.client.login(username="tester", password="testpassword")
+        self.client.force_login(self.user)
 
     def test_success_post(self):
         response = self.client.post(self.url)
@@ -112,7 +112,7 @@ class TestTweetDeleteView(TestCase):
 
     def test_failure_post_with_incorrect_user(self):
         self.another_user = User.objects.create_user(username="Koshi", password="testpass")
-        self.client.login(username="Koshi", password="testpass")
+        self.client.force_login(self.another_user)
         response = self.client.post(self.url)
         first_count = Tweet.objects.count()
         self.assertEqual(response.status_code, 403)
