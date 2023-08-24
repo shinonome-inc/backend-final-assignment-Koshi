@@ -27,10 +27,6 @@ class TweetDetailView(LoginRequiredMixin, DetailView):
     template_name = "tweets/tweet_detail.html"
     model = Tweet
 
-    def get_queryset(self):
-        pk = self.kwargs["pk"]
-        return Tweet.objects.filter(id=pk)
-
 
 class TweetDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     template_name = "tweets/tweet_delete.html"
