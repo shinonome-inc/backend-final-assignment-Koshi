@@ -38,7 +38,6 @@ class TestTweetCreateView(TestCase):
             "content": "testcontent",
         }
         response = self.client.post(self.url, valid_data)
-        self.assertEqual(response.status_code, 302)
         self.assertRedirects(
             response,
             reverse("tweets:home"),
