@@ -19,13 +19,8 @@ class TweetCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy("tweets:home")
 
     def form_valid(self, form):
+        form.instance.user = self.request.user
         return super().form_valid(form)
-
-    # Tweetモデルのuserに今ログインしているusernameを格納し、フォームに渡している。
-    def get_form_kwargs(self):
-        kwgs = super().get_form_kwargs()
-        kwgs["user"] = self.request.user
-        return kwgs
 
 
 class TweetDetailView(DetailView):
