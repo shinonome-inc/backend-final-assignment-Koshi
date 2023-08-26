@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Tweet Delete{% endblock %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <p>データ "{{ object }}" を本当に削除しますか？</p>
+    <button type="submit">確定</button>
+</form>
+{% endblock %}

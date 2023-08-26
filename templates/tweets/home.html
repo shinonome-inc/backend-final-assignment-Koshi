@@ -3,5 +3,12 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h1>Homeです</h1>
+{% for item in tweet_list %}
+<p>username: {{ item.user }} 投稿日時: {{ item.created_at }}</p>
+<p>投稿内容: {{ item.content }} 
+    <a href="{% url 'tweets:detail' pk=item.id %}">詳細</a>
+    <a href="{% url 'tweets:delete' pk=item.id %}">削除</a>
+</p>
+<hr>
+{% endfor %}
 {% endblock %}

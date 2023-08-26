@@ -13,6 +13,8 @@
       {% if request.user.is_authenticated %}
       <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
       <li><a href="{% url 'accounts:user_profile' username=request.user %}">User Profile</a></li>
+      <li><a href="{% url 'tweets:create' %}">Tweet Creation</a></li>
+      <li><a href="{% url 'tweets:home' %}">Home</a></li>
       {% else %}
       <li><a href="{% url 'accounts:login' %}">Login</a></li>
       {% endif %}
