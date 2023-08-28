@@ -30,21 +30,23 @@ class SignupView(CreateView):
 
 class UserProfileView(LoginRequiredMixin, ListView):
     template_name = "accounts/user_profile.html"
-    model = User
+    model = Tweet
+    context_object_name = "tweet_list"
+
+    def get_queryset(self):
+        user = User.objects.get(username=self.kwargs["username"])
+        self.user = user
+        return Tweet.objects.select_related("user").filter(user=user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = User.objects.get(username=self.kwargs["username"])
-        context["user"] = user
-        following = User.objects.get(username=self.kwargs["username"])
-        follower = User.objects.get(username=self.request.user.username)
-        if FriendShip.objects.filter(following=following, follower=follower).exists():
+        context["user"] = self.user
+        if FriendShip.objects.filter(following=self.user, follower=self.request.user).exists():
             context["is_follow"] = True
         else:
             context["is_follow"] = False
-        context["follow_number"] = FriendShip.objects.filter(follower=user).count()
-        context["follower_number"] = FriendShip.objects.filter(following=user).count()
-        context["tweet_list"] = Tweet.objects.filter(user=user).select_related("user")
+        context["follow_number"] = FriendShip.objects.filter(follower=self.user).count()
+        context["follower_number"] = FriendShip.objects.filter(following=self.user).count()
         return context
 
 
