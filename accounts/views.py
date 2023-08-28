@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, HttpResponseNotFound
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, RedirectView
 
@@ -57,7 +57,7 @@ class FollowView(LoginRequiredMixin, RedirectView):
             following = User.objects.get(username=self.kwargs["username"])
         except User.DoesNotExist:
             messages.warning(request, "そのユーザーは存在しません")
-            return HttpResponseBadRequest("that user doesn't exist")
+            return HttpResponseNotFound("that user doesn't exist")
         if follower == following:
             messages.warning(request, "自分自身をフォローできません")
             return HttpResponseBadRequest("you can't follow yourself")
@@ -78,7 +78,7 @@ class UnFollowView(LoginRequiredMixin, RedirectView):
             following = User.objects.get(username=self.kwargs["username"])
         except User.DoesNotExist:
             messages.warning(request, "そのユーザーは存在しません")
-            return HttpResponseBadRequest("that user doesn't exist")
+            return HttpResponseNotFound("that user doesn't exist")
         if follower == following:
             messages.warning(request, "自分自身はアンフォローできません")
             return HttpResponseBadRequest("you can't unfollow yourself")
