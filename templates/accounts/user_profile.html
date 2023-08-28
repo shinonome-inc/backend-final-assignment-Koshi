@@ -3,8 +3,23 @@
 {% block title %}User Profile{% endblock %}
 
 {% block content %}
+<p>{{ user }}</p>
+{% if user == request.user %}
+<p><a href={% url 'accounts:following_list' user %}>フォロー数</a>: {{ follow_number }} <a href={% url 'accounts:follower_list' user %}>フォロワー数</a>: {{ follower_number }}</p>
+{% elif is_follow %}
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" formaction={% url 'accounts:unfollow' user %}>アンフォロー</button>
+</form>
+<p><a href={% url 'accounts:following_list' user %}>フォロー数</a>: {{ follow_number }} <a href={% url 'accounts:follower_list' user %}>フォロワー数</a>: {{ follower_number }}</p>
+{% else %}
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" formaction={% url 'accounts:follow' user %}>フォロー</button>
+</form>
+<p><a href={% url 'accounts:following_list' user %}>フォロー数</a>: {{ follow_number }} <a href={% url 'accounts:follower_list' user %}>フォロワー数</a>: {{ follower_number }}</p>
+{% endif %}
 {% for item in tweet_list %}
-<p>username: {{ item.user }} 投稿日時: {{ item.created_at }}</p>
 <p>投稿内容: {{ item.content }} 
     <a href="{% url 'tweets:detail' pk=item.id %}">詳細</a>
     <a href="{% url 'tweets:delete' pk=item.id %}">削除</a>
