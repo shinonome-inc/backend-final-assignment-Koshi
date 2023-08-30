@@ -7,7 +7,9 @@
 <p>username: <a href={% url 'accounts:user_profile' item.user %}>{{ item.user }}</a> 投稿日時: {{ item.created_at }}</p>
 <p>投稿内容: {{ item.content }} 
     <a href="{% url 'tweets:detail' pk=item.id %}">詳細</a>
+    {% if item.user == request.user %}
     <a href="{% url 'tweets:delete' pk=item.id %}">削除</a>
+    {% endif %}
 </p>
 <hr>
 {% endfor %}
