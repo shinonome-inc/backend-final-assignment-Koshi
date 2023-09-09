@@ -41,12 +41,12 @@ class UserProfileView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["user"] = self.user
-        if FriendShip.objects.filter(following=self.user, follower=self.request.user).exists():
+        if FriendShip.objects.filter(followee=self.user, follower=self.request.user).exists():
             context["is_follow"] = True
         else:
             context["is_follow"] = False
         context["follow_number"] = FriendShip.objects.filter(follower=self.user).count()
-        context["follower_number"] = FriendShip.objects.filter(following=self.user).count()
+        context["follower_number"] = FriendShip.objects.filter(followee=self.user).count()
         return context
 
 
@@ -56,17 +56,17 @@ class FollowView(LoginRequiredMixin, RedirectView):
     def post(self, request, *args, **kwargs):
         try:
             follower = User.objects.get(username=self.request.user)
-            following = User.objects.get(username=self.kwargs["username"])
+            followee = User.objects.get(username=self.kwargs["username"])
         except User.DoesNotExist:
             messages.warning(request, "そのユーザーは存在しません")
             return HttpResponseNotFound("that user doesn't exist")
-        if follower == following:
+        if follower == followee:
             messages.warning(request, "自分自身をフォローできません")
             return HttpResponseBadRequest("you can't follow yourself")
-        if FriendShip.objects.filter(following=following, follower=follower):
+        if FriendShip.objects.filter(followee=followee, follower=follower):
             messages.warning(request, "既にフォローしています")
         else:
-            FriendShip.objects.create(following=following, follower=follower)
+            FriendShip.objects.create(followee=followee, follower=follower)
             messages.warning(request, "フォローしました")
         return super().post(request, *args, **kwargs)
 
@@ -77,15 +77,15 @@ class UnFollowView(LoginRequiredMixin, RedirectView):
     def post(self, request, *args, **kwargs):
         try:
             follower = User.objects.get(username=self.request.user)
-            following = User.objects.get(username=self.kwargs["username"])
+            followee = User.objects.get(username=self.kwargs["username"])
         except User.DoesNotExist:
             messages.warning(request, "そのユーザーは存在しません")
             return HttpResponseNotFound("that user doesn't exist")
-        if follower == following:
+        if follower == followee:
             messages.warning(request, "自分自身はアンフォローできません")
             return HttpResponseBadRequest("you can't unfollow yourself")
-        elif FriendShip.objects.filter(following=following, follower=follower).exists():
-            unfollow = FriendShip.objects.get(following=following, follower=follower)
+        elif FriendShip.objects.filter(followee=followee, follower=follower).exists():
+            unfollow = FriendShip.objects.get(followee=followee, follower=follower)
             unfollow.delete()
             messages.success(request, "{}のフォローを外しました", kwargs["username"])
             return super().post(request, *args, **kwargs)
@@ -102,7 +102,7 @@ class FollowingListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         following_user = User.objects.get(username=self.kwargs["username"])
         self.user = following_user
-        return FriendShip.objects.filter(follower=following_user).select_related("following").order_by("-created_at")
+        return FriendShip.objects.filter(follower=following_user).select_related("followee").order_by("-created_at")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -118,7 +118,7 @@ class FollowerListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         follower_user = User.objects.get(username=self.kwargs["username"])
         self.user = follower_user
-        return FriendShip.objects.filter(following=follower_user).select_related("follower").order_by("-created_at")
+        return FriendShip.objects.filter(followee=follower_user).select_related("follower").order_by("-created_at")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

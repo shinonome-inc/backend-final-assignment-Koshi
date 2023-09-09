@@ -4,6 +4,6 @@
 
 {% block content %}
 {% for follow in following_list %}
-<p><a href={% url 'accounts:user_profile' follow.following %}>{{ follow.following }}</a>フォローした日時：{{ follow.created_at }}</p>
+<p><a href={% url 'accounts:user_profile' follow.followee %}>{{ follow.followee }}</a>フォローした日時：{{ follow.created_at }}</p>
 {% endfor %}
 {% endblock %}
