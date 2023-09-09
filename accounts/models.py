@@ -15,5 +15,5 @@ class FriendShip(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["follower", "following"], name="unique_FollowUser"),
+            models.UniqueConstraint(fields=["follower", "following"], name="unique_follow_user"),
         ]
