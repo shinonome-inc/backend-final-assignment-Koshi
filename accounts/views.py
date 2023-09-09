@@ -58,16 +58,16 @@ class FollowView(LoginRequiredMixin, RedirectView):
             follower = User.objects.get(username=self.request.user)
             followee = User.objects.get(username=self.kwargs["username"])
         except User.DoesNotExist:
-            messages.warning(request, "そのユーザーは存在しません")
+            messages.error(request, "そのユーザーは存在しません")
             return HttpResponseNotFound("that user doesn't exist")
         if follower == followee:
-            messages.warning(request, "自分自身をフォローできません")
+            messages.error(request, "自分自身をフォローできません")
             return HttpResponseBadRequest("you can't follow yourself")
         if FriendShip.objects.filter(followee=followee, follower=follower):
-            messages.warning(request, "既にフォローしています")
+            messages.info(request, "既にフォローしています")
         else:
             FriendShip.objects.create(followee=followee, follower=follower)
-            messages.warning(request, "フォローしました")
+            messages.success(request, "フォローしました")
         return super().post(request, *args, **kwargs)
 
 
@@ -79,10 +79,10 @@ class UnFollowView(LoginRequiredMixin, RedirectView):
             follower = User.objects.get(username=self.request.user)
             followee = User.objects.get(username=self.kwargs["username"])
         except User.DoesNotExist:
-            messages.warning(request, "そのユーザーは存在しません")
+            messages.error(request, "そのユーザーは存在しません")
             return HttpResponseNotFound("that user doesn't exist")
         if follower == followee:
-            messages.warning(request, "自分自身はアンフォローできません")
+            messages.error(request, "自分自身はアンフォローできません")
             return HttpResponseBadRequest("you can't unfollow yourself")
         elif FriendShip.objects.filter(followee=followee, follower=follower).exists():
             unfollow = FriendShip.objects.get(followee=followee, follower=follower)
@@ -90,7 +90,7 @@ class UnFollowView(LoginRequiredMixin, RedirectView):
             messages.success(request, "{}のフォローを外しました", kwargs["username"])
             return super().post(request, *args, **kwargs)
         else:
-            messages.warning(request, "あなたは{}をフォローしていません", kwargs["username"])
+            messages.info(request, "あなたは{}をフォローしていません", kwargs["username"])
             return HttpResponseBadRequest("you don't follow that username")
 
 
