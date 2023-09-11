@@ -97,7 +97,6 @@ class UnFollowView(LoginRequiredMixin, RedirectView):
 
 class FollowingListView(LoginRequiredMixin, ListView):
     template_name = "accounts/following_list.html"
-    model = FriendShip
     context_object_name = "following_list"
 
     def get_queryset(self):
@@ -107,7 +106,6 @@ class FollowingListView(LoginRequiredMixin, ListView):
 
 class FollowerListView(LoginRequiredMixin, ListView):
     template_name = "accounts/follower_list.html"
-    model = FriendShip
     context_object_name = "follower_list"
 
     def get_queryset(self):
