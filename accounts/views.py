@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseBadRequest, HttpResponseNotFound
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, RedirectView
 
@@ -34,7 +35,7 @@ class UserProfileView(LoginRequiredMixin, ListView):
     context_object_name = "tweet_list"
 
     def get_queryset(self):
-        user = User.objects.get(username=self.kwargs["username"])
+        user = get_object_or_404(User, username=self.kwargs["username"])
         self.user = user
         return Tweet.objects.select_related("user").filter(user=user)
 
