@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block title %}Following List{% endblock %}
+
+{% block content %}
+{% for follow in following_list %}
+<p><a href={% url 'accounts:user_profile' follow.followee %}>{{ follow.followee }}</a>フォローした日時：{{ follow.created_at }}</p>
+{% endfor %}
+{% endblock %}
