@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
 
+from mysite import settings
+
 User = get_user_model()
 
 
@@ -15,3 +17,11 @@ class Tweet(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+
+class Like(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE, related_name="like_tweet")
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["user", "tweet"], name="unique_like")]

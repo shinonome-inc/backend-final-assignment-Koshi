@@ -19,11 +19,16 @@
 </form>
 <p><a href={% url 'accounts:following_list' user %}>フォロー数</a>: {{ follow_number }} <a href={% url 'accounts:follower_list' user %}>フォロワー数</a>: {{ follower_number }}</p>
 {% endif %}
-{% for item in tweet_list %}
-<p>投稿内容: {{ item.content }} 
-    <a href="{% url 'tweets:detail' pk=item.id %}">詳細</a>
-    <a href="{% url 'tweets:delete' pk=item.id %}">削除</a>
+{% for tweet in tweet_list %}
+<p>投稿内容: {{ tweet.content }} 
+    <a href="{% url 'tweets:detail' pk=tweet.id %}">詳細</a>
+    <a href="{% url 'tweets:delete' pk=tweet.id %}">削除</a>
+    {% include "tweets/like.html" %}
 </p>
 <hr>
 {% endfor %}
+{% endblock %}
+
+{% block extrajs %}
+{% include "tweets/script.html" %}
 {% endblock %}
