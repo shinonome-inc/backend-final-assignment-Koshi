@@ -5,7 +5,7 @@
 {% block content %}
 <p>username: {{ tweet.user }} 投稿日時: {{ tweet.created_at }}</p>
 <p>投稿内容: {{ tweet.content }}
-    {% include "tweets/like.html" %}
+    {% include "tweets/like_tweet.html" %}
 </p>
 {% endblock %}
 

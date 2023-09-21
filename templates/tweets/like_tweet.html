@@ -1,0 +1,12 @@
+<span class="like-tweet" data-pk="{{ tweet.pk }}">
+    {% if tweet.pk in like_list %}
+        <button class="like-button" data-is_liked="true">
+            <i class="fa-solid fa-heart" style="color:red"></i>
+        </button>
+    {% else %}
+        <button class="like-button" data-is_liked="false">
+            <i class="fa-regular fa-heart" style="color:red"></i>
+        </button>
+    {% endif %}
+    <span class="like-number">いいね数: {{ tweet.like_tweet.count }}</span>
+</span>
