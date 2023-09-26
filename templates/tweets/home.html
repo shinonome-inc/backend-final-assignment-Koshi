@@ -3,14 +3,19 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-{% for item in tweet_list %}
-<p>username: <a href={% url 'accounts:user_profile' item.user %}>{{ item.user }}</a> 投稿日時: {{ item.created_at }}</p>
-<p>投稿内容: {{ item.content }} 
-    <a href="{% url 'tweets:detail' pk=item.id %}">詳細</a>
-    {% if item.user == request.user %}
-    <a href="{% url 'tweets:delete' pk=item.id %}">削除</a>
+{% for tweet in tweet_list %}
+<p>username: <a href={% url 'accounts:user_profile' tweet.user %}>{{ tweet.user }}</a> 投稿日時: {{ tweet.created_at }}</p>
+<p>投稿内容: {{ tweet.content }} 
+    <a href="{% url 'tweets:detail' pk=tweet.id %}">詳細</a>
+    {% if tweet.user == request.user %}
+    <a href="{% url 'tweets:delete' pk=tweet.id %}">削除</a>
     {% endif %}
+    {% include "tweets/like_tweet.html" %}
 </p>
 <hr>
 {% endfor %}
+{% endblock %}
+
+{% block extrajs %}
+{% include "tweets/script.html" %}
 {% endblock %}
